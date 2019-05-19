@@ -665,7 +665,7 @@ the FSK proper, not the audio signal</value>
     </param>
     <param>
       <key>gain</key>
-      <value>audio_rate/(2*math.pi*fsk_deviation/8.0)</value>
+      <value>-audio_rate/(2*math.pi*fsk_deviation/8.0)</value>
     </param>
     <param>
       <key>id</key>
