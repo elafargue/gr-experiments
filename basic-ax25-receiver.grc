@@ -148,7 +148,7 @@
     </param>
     <param>
       <key>ntaps</key>
-      <value>5*samples_per_symbol*nfilts</value>
+      <value>samples_per_symbol*nfilts</value>
     </param>
     <param>
       <key>samp_rate</key>
@@ -163,7 +163,7 @@
     <key>variable</key>
     <param>
       <key>comment</key>
-      <value></value>
+      <value>Needs to be a multiple of baud rate</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -227,7 +227,7 @@ would use 76kHz</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(192, 12)</value>
+      <value>(192, 44)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -282,7 +282,7 @@ calculated based on High/Low fsk freq</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(680, 76)</value>
+      <value>(672, 60)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -309,7 +309,7 @@ calculated based on High/Low fsk freq</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(672, 12)</value>
+      <value>(768, 4)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -336,7 +336,7 @@ calculated based on High/Low fsk freq</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(576, 12)</value>
+      <value>(672, 4)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -375,7 +375,7 @@ calculated based on High/Low fsk freq</value>
     </param>
     <param>
       <key>value</key>
-      <value>32</value>
+      <value>4</value>
     </param>
   </block>
   <block>
@@ -433,117 +433,6 @@ calculated based on High/Low fsk freq</value>
     </param>
   </block>
   <block>
-    <key>variable_qtgui_range</key>
-    <param>
-      <key>comment</key>
-      <value>Adjust to avoid getting too much noise
-in the demodulator</value>
-    </param>
-    <param>
-      <key>value</key>
-      <value>-80</value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(568, 76)</value>
-    </param>
-    <param>
-      <key>gui_hint</key>
-      <value>3,0,1,2</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>squelch</value>
-    </param>
-    <param>
-      <key>label</key>
-      <value>Squelch</value>
-    </param>
-    <param>
-      <key>min_len</key>
-      <value>200</value>
-    </param>
-    <param>
-      <key>orient</key>
-      <value>Qt.Horizontal</value>
-    </param>
-    <param>
-      <key>start</key>
-      <value>-100</value>
-    </param>
-    <param>
-      <key>step</key>
-      <value>1</value>
-    </param>
-    <param>
-      <key>stop</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>rangeType</key>
-      <value>float</value>
-    </param>
-    <param>
-      <key>widget</key>
-      <value>counter_slider</value>
-    </param>
-  </block>
-  <block>
-    <key>analog_feedforward_agc_cc</key>
-    <param>
-      <key>alias</key>
-      <value></value>
-    </param>
-    <param>
-      <key>comment</key>
-      <value></value>
-    </param>
-    <param>
-      <key>affinity</key>
-      <value></value>
-    </param>
-    <param>
-      <key>_enabled</key>
-      <value>True</value>
-    </param>
-    <param>
-      <key>_coordinate</key>
-      <value>(744, 380)</value>
-    </param>
-    <param>
-      <key>_rotation</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>id</key>
-      <value>analog_feedforward_agc_cc_0</value>
-    </param>
-    <param>
-      <key>maxoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>minoutbuf</key>
-      <value>0</value>
-    </param>
-    <param>
-      <key>num_samples</key>
-      <value>512</value>
-    </param>
-    <param>
-      <key>reference</key>
-      <value>1.0</value>
-    </param>
-  </block>
-  <block>
     <key>analog_fm_deemph</key>
     <param>
       <key>alias</key>
@@ -562,11 +451,11 @@ if you receive more packets.</value>
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>2</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(680, 236)</value>
+      <value>(664, 196)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -613,7 +502,7 @@ if you receive more packets.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(488, 244)</value>
+      <value>(488, 204)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -645,7 +534,11 @@ if you receive more packets.</value>
     <param>
       <key>comment</key>
       <value>This time we are demodulating
-the FSK proper, not the audio signal</value>
+the FSK proper, not the audio signal.
+
+Note: gain does not have a major impact on
+decoding success (see what happens with a gain
+of 1)</value>
     </param>
     <param>
       <key>affinity</key>
@@ -657,7 +550,7 @@ the FSK proper, not the audio signal</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(760, 468)</value>
+      <value>(720, 412)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -665,7 +558,7 @@ the FSK proper, not the audio signal</value>
     </param>
     <param>
       <key>gain</key>
-      <value>-audio_rate/(2*math.pi*fsk_deviation/8.0)</value>
+      <value>audio_rate/(2*math.pi*fsk_deviation/8.0)</value>
     </param>
     <param>
       <key>id</key>
@@ -705,7 +598,7 @@ the baseband audio signal</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(1024, 244)</value>
+      <value>(1040, 204)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -944,11 +837,11 @@ the baseband audio signal</value>
     </param>
     <param>
       <key>file</key>
-      <value>/Users/elafargue/Documents/Prodsec/Radio/gr-experiments/samples/aprs-1200.complex</value>
+      <value>/Users/elafargue/Documents/Prodsec/Radio/gr-experiments/samples/aprs-144.39-250k-35dBGain.complex</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(16, 432)</value>
+      <value>(16, 488)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -972,7 +865,7 @@ the baseband audio signal</value>
     </param>
     <param>
       <key>repeat</key>
-      <value>True</value>
+      <value>False</value>
     </param>
     <param>
       <key>vlen</key>
@@ -1031,7 +924,7 @@ so we apply the relevant corrections here</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(88, 672)</value>
+      <value>(88, 696)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1099,6 +992,116 @@ so we apply the relevant corrections here</value>
     <param>
       <key>minoutbuf</key>
       <value>0</value>
+    </param>
+  </block>
+  <block>
+    <key>blocks_throttle</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(72, 428)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>blocks_throttle_0</value>
+    </param>
+    <param>
+      <key>ignoretag</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>maxoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>minoutbuf</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>samples_per_second</key>
+      <value>samp_rate</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>complex</value>
+    </param>
+    <param>
+      <key>vlen</key>
+      <value>1</value>
+    </param>
+  </block>
+  <block>
+    <key>blocks_udp_sink</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value></value>
+    </param>
+    <param>
+      <key>affinity</key>
+      <value></value>
+    </param>
+    <param>
+      <key>ipaddr</key>
+      <value>127.0.0.1</value>
+    </param>
+    <param>
+      <key>port</key>
+      <value>7788</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(672, 912)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>blocks_udp_sink_0</value>
+    </param>
+    <param>
+      <key>type</key>
+      <value>byte</value>
+    </param>
+    <param>
+      <key>psize</key>
+      <value>1472</value>
+    </param>
+    <param>
+      <key>eof</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>vlen</key>
+      <value>1</value>
     </param>
   </block>
   <block>
@@ -1212,7 +1215,7 @@ audio files directly</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(472, 672)</value>
+      <value>(488, 696)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1251,7 +1254,7 @@ audio files directly</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(264, 668)</value>
+      <value>(264, 692)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1285,7 +1288,9 @@ audio files directly</value>
       <value>AX25 is framed using HDLC, and Gnuradio comes
 with a HDLC deframer, we are lucky.
 
-This checks that the CRC is valid, by the way.</value>
+This checks that the CRC is valid, so only frames
+whose CRC is correct will be forwarded on in the
+flowgraph.</value>
     </param>
     <param>
       <key>affinity</key>
@@ -1353,7 +1358,7 @@ the clock (baud rate and sample rate)</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(656, 616)</value>
+      <value>(656, 600)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1369,7 +1374,7 @@ the clock (baud rate and sample rate)</value>
     </param>
     <param>
       <key>loop_bw</key>
-      <value>6.28/400.0*2/70</value>
+      <value>2*math.pi/400.0*2/70</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -1412,7 +1417,9 @@ the clock (baud rate and sample rate)</value>
     </param>
     <param>
       <key>comment</key>
-      <value>Recenter the audio around 0Hz</value>
+      <value>Recenter the audio around 0Hz.
+Parameters adjusted on a reference
+recording to maximize decoding</value>
     </param>
     <param>
       <key>affinity</key>
@@ -1452,7 +1459,7 @@ the clock (baud rate and sample rate)</value>
     </param>
     <param>
       <key>taps</key>
-      <value>firdes.low_pass(1.0,audio_rate,fsk_deviation, 400)</value>
+      <value>firdes.low_pass(1.0,audio_rate,fsk_deviation, 350)</value>
     </param>
     <param>
       <key>type</key>
@@ -1471,7 +1478,9 @@ the clock (baud rate and sample rate)</value>
     </param>
     <param>
       <key>comment</key>
-      <value></value>
+      <value>The cutoff frequency can be aggressive
+to avoid useless power getting into the chain,
+this improves decoding quite a bit.</value>
     </param>
     <param>
       <key>affinity</key>
@@ -1479,7 +1488,7 @@ the clock (baud rate and sample rate)</value>
     </param>
     <param>
       <key>cutoff_freq</key>
-      <value>100e3</value>
+      <value>3*fm_deviation_hz</value>
     </param>
     <param>
       <key>decim</key>
@@ -1495,7 +1504,7 @@ the clock (baud rate and sample rate)</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(296, 204)</value>
+      <value>(288, 164)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -1527,7 +1536,7 @@ the clock (baud rate and sample rate)</value>
     </param>
     <param>
       <key>width</key>
-      <value>2e3</value>
+      <value>fm_deviation_hz</value>
     </param>
     <param>
       <key>win</key>
@@ -1569,7 +1578,7 @@ then the resulting audio output is FSK-demodulated.</value>
     </param>
     <param>
       <key>note</key>
-      <value>Explanation</value>
+      <value>Introduction</value>
     </param>
   </block>
   <block>
@@ -3386,7 +3395,7 @@ then the resulting audio output is FSK-demodulated.</value>
     </param>
     <param>
       <key>gui_hint</key>
-      <value>1,0,1,2</value>
+      <value>1,0,1,1</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -3753,7 +3762,7 @@ then the resulting audio output is FSK-demodulated.</value>
     </param>
     <param>
       <key>gui_hint</key>
-      <value>2,0,1,2</value>
+      <value>1,1,1,1</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4116,7 +4125,7 @@ then the resulting audio output is FSK-demodulated.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(472, 512)</value>
+      <value>(472, 536)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -4319,7 +4328,7 @@ then the resulting audio output is FSK-demodulated.</value>
     </param>
     <param>
       <key>decim</key>
-      <value>samp_rate</value>
+      <value>samp_rate/1000</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -4331,7 +4340,7 @@ then the resulting audio output is FSK-demodulated.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(848, 224)</value>
+      <value>(808, 184)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4343,7 +4352,7 @@ then the resulting audio output is FSK-demodulated.</value>
     </param>
     <param>
       <key>interp</key>
-      <value>audio_rate</value>
+      <value>audio_rate/1000</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -5777,7 +5786,7 @@ then the resulting audio output is FSK-demodulated.</value>
     </param>
     <param>
       <key>ant0</key>
-      <value>RX2</value>
+      <value>TX/RX</value>
     </param>
     <param>
       <key>bw0</key>
@@ -5801,7 +5810,7 @@ then the resulting audio output is FSK-demodulated.</value>
     </param>
     <param>
       <key>gain0</key>
-      <value>25</value>
+      <value>40</value>
     </param>
     <param>
       <key>lo_export0</key>
@@ -6953,7 +6962,7 @@ then the resulting audio output is FSK-demodulated.</value>
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(16, 504)</value>
+      <value>(24, 568)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -7109,12 +7118,6 @@ then the resulting audio output is FSK-demodulated.</value>
     </param>
   </block>
   <connection>
-    <source_block_id>analog_feedforward_agc_cc_0</source_block_id>
-    <sink_block_id>analog_quadrature_demod_cf_0_0</sink_block_id>
-    <source_key>0</source_key>
-    <sink_key>0</sink_key>
-  </connection>
-  <connection>
     <source_block_id>analog_fm_deemph_0</source_block_id>
     <sink_block_id>rational_resampler_xxx_0</sink_block_id>
     <source_key>0</source_key>
@@ -7170,7 +7173,7 @@ then the resulting audio output is FSK-demodulated.</value>
   </connection>
   <connection>
     <source_block_id>blocks_file_source_0</source_block_id>
-    <sink_block_id>low_pass_filter_0</sink_block_id>
+    <sink_block_id>blocks_throttle_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -7183,6 +7186,18 @@ then the resulting audio output is FSK-demodulated.</value>
   <connection>
     <source_block_id>blocks_pdu_to_tagged_stream_0</source_block_id>
     <sink_block_id>blocks_file_sink_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>blocks_pdu_to_tagged_stream_0</source_block_id>
+    <sink_block_id>blocks_udp_sink_0</sink_block_id>
+    <source_key>0</source_key>
+    <sink_key>0</sink_key>
+  </connection>
+  <connection>
+    <source_block_id>blocks_throttle_0</source_block_id>
+    <sink_block_id>low_pass_filter_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
@@ -7230,7 +7245,7 @@ then the resulting audio output is FSK-demodulated.</value>
   </connection>
   <connection>
     <source_block_id>freq_xlating_fir_filter_xxx_0</source_block_id>
-    <sink_block_id>analog_feedforward_agc_cc_0</sink_block_id>
+    <sink_block_id>analog_quadrature_demod_cf_0_0</sink_block_id>
     <source_key>0</source_key>
     <sink_key>0</sink_key>
   </connection>
