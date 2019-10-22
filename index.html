@@ -54,6 +54,7 @@
     <ul class="nav bs-sidenav">
         <li class="main active"><a href="#gnuradio-yet-another-guide">Gnuradio, yet another guide</a></li>
             <li><a href="#preamble">Preamble</a></li>
+            <li><a href="#introduction">Introduction</a></li>
             <li><a href="#links">Links</a></li>
             <li><a href="#variants-of-gnuradio-mainnextetc">Variants of GNURadio - main/next/etc</a></li>
             <li><a href="#installing-gnuradio">Installing GNURadio</a></li>
@@ -71,6 +72,8 @@
 <h1 id="gnuradio-yet-another-guide">Gnuradio, yet another guide</h1>
 <h2 id="preamble">Preamble</h2>
 <p>THESE ARE MY OWN NOTES AFTER WORKING WITH GNURADIO FOR A WHILE, NO PROMISE OF ANY FITNESS FOR ANY PARTICULAR PURPOSE.</p>
+<p>A lot of those flowgraphs are my own, some are adapted/copied from various sources online. If you recognize your work and think it is missing attribution, please reach out and I will add proper credit where it's due. I simply haven't tracked down all my sources as I went along...</p>
+<h2 id="introduction">Introduction</h2>
 <p>GNURadio is an amazing framework for all things related radio digital signal processing, and it is as powerful as it is daunting: it is a fairly venerable project started in 2001, and has always been a real adventure to install on any computer. The main gnuradio documentation, maintained on wiki.gnuradio.org, will usually help, but it is all in all fairly sparse and often quite arcane.</p>
 <p>There is a lot of material out there about GNURadio, with varying degrees of relevance, accuracy, compatibility with the current versions of GNURadio. This guide is an attempt at covering most of the basics of building GNURadio flowgraphs to process most common radio modulations, along with examples of more advanced software, often based on GNURadio, designed to fully demodulate various categories of radio signals.</p>
 <p>A common challenge for many newcomers is that GNURadio is before anything else a digital signal processing framework: despite the 'Lego'-like approach of building flowgraphs on GNURadio Companion, you will always be very limited in what you can achieve without proper understanding of the fundamentals of digital signal processing. There are a lot of excellent resources on the web for learning this (see the links section below), as well as many university courses, and if you are seriously planning to use GNURadio for real projects, learning - or taking a refresher on - digital signal processing is really a must.</p>
@@ -236,8 +239,23 @@ style = native
 <h3 id="ofdm">OFDM</h3>
 <h2 id="real-world-examples">Real world examples</h2>
 <h3 id="broadcast-fm">Broadcast FM</h3>
+<p><a href="https://en.wikipedia.org/wiki/FM_broadcasting">Broadcast FM</a> is kind of a "Hello World" of radio reception on GNURadio, the below flowgraphs are a good example of making your first steps with it. The main difference between "Broadcast FM" compared to just "FM" modulation is the following:</p>
+<ul>
+<li>Broadcast FM uses a standardized frequency deviation, usually with a maximum of 75kHz</li>
+<li>Pre-emphasis is applied to the signal to offset the effect of band noise</li>
+<li>Modern FM usually is broadcast in stereo (see below or Wikipedia for details)</li>
+<li>More and more, digital information is included in the broadcast (data, audio, or both)</li>
+</ul>
 <h4 id="mono">Mono</h4>
+<p>A Broadcast mono FM receiver is really a standard FM receiver with standard deviation and de-emphasis applied.  It is identical to the flowgraph shown above on basic FM reception:</p>
+<p><img alt="Basic FM Receiver" src="assets/basic-fm-receiver.png" /></p>
+<p><a href="https://github.com/elafargue/gr-experiments/blob/master/basic-fm-receiver.grc">Flowgraph</a></p>
 <h4 id="stereo">Stereo</h4>
+<p>Stereo signals are transmitted at a set of two channels: the "R+L" channels at baseband audio frequency, and "R-L" centered on 38kHz higher. This makes them compatible with mono receivers that will just demodulate the R+L component.</p>
+<p>A 19kHz pilot tone is also added to help receivers detect the presence of a stereo signal, and also reconstruct the 38kHz subcarrier to demodulate the R-L signal.</p>
+<p>For this reason, a FM stereo receiver is a a bit more complex:</p>
+<p><img alt="Stereo FM Receiver" src="assets/stereo-fm-receiver.png" /></p>
+<p><a href="">Flowgraph</a></p>
 <h4 id="stereo-with-rds">Stereo with RDS</h4>
 <p><a href="https://github.com/elafargue/gr-experiments/blob/master/rds_rx_wx.grc">Basic receiver</a>.</p>
 <p><a href="https://github.com/elafargue/gr-experiments/blob/master/fm-stereo-rds-tx.grc">Basic transmitter</a></p>
@@ -257,18 +275,18 @@ style = native
 <p><em>BladeRF Micro support:</em> I have opened a <a href="https://github.com/flightaware/dump1090/pull/37">pull request</a> to add support for the BladeRF micro. Note that the BladeRF micro does not seem to work nearly as well as the bespoke rtl-sdr based orange dongle of Flight Aware, I might need to spend more time working at the gain settings for that device. In theory it should be able to work as well as RTL-SDR dongles, especially if used with a LNA.</p>
 <h3 id="gpsgnss">GPS/GNSS</h3>
 <h4 id="receiving">Receiving</h4>
-<p>There are several packages available out there to do GNSS demodulation. The most advanced is the creatively-named 'gnss-sdr' package available at https://github.com/gnss-sdr/gnss-sdr</p>
+<p>There are several packages available out there to do GNSS demodulation. The most advanced is the creatively-named 'gnss-sdr' package available on  <a href="https://github.com/gnss-sdr/gnss-sdr">github</a>.</p>
 <h5 id="macos-support-notes-for-gnss-sdr">MacOS support notes for gnss-sdr</h5>
 <p>2019.04: gnss-sdr is avaible on MacPort but on an outdated version that basically crashes with any current SDR (rtlsdr/osmocom). it is possible to build on MacOS though, using the current version of GNURadio installed through Macports. There are good build instructions available on the main github README.md page for gnss-sdr which you should follow.</p>
 <p>Don't forget to add "cmake -DENABLE_OSMOSDR=ON .." if you want OsmoSDR support (BladeRF, RTL-SDR etc).</p>
-<p>CAREFUL: be sure you do not have a lingering version of gnss-sdr installed through a package manager when you are trying to build from source, since it will usually make compilation fail. In particular, volk will leave a "volk_gnss" include path on the package manager paths (/opt/local/include for macports) that will mess up compilation, you might have to delete by hand. Also, make sure that in case you have an old homebrew install on /usr/local, none of the libraries gnss-sdr relies on are found on that path (check out the output of the cmake step).</p>
+<p>CAREFUL: be sure you do not have a lingering version of gnss-sdr installed through a package manager when you are trying to build from source, since it will usually make compilation fail. In particular, volk will leave a "volk_gnss" include path on the package manager paths (<code>/opt/local/include</code> for macports) that will mess up compilation, you might have to delete by hand. Also, make sure that in case you have an old homebrew install on <code>/usr/local</code>, none of the libraries gnss-sdr relies on are found on that path (check out the output of the cmake step).</p>
 <h5 id="testing">Testing</h5>
-<p>Once everything is installed (installing from a source compilation does to /usr/local by default), you can follow the tutorial on the <a href="https://gnss-sdr.org/my-first-fix/">gnss-sdr website</a> and download the test file. It should decode without issues.</p>
+<p>Once everything is installed (installing from a source compilation does to <code>/usr/local</code> by default), you can follow the tutorial on the <a href="https://gnss-sdr.org/my-first-fix/">gnss-sdr website</a> and download the test file. It should decode without issues.</p>
 <h5 id="frontends">Frontends</h5>
 <p>The <a href="https://gnss-sdr.org/conf/">Configurations</a> page on the gnss-sdr website does a good job explaining how to configure a couple of frontends.</p>
-<p>As the main site mentions, be sure you use an active antenna - with a bias Tee if necessary - since the GPS signal is usually below the sensitivity level of most SDRs.</p>
+<p>As the main site mentions, be sure you use an active antenna - use a bias Tee if necessary - since the GPS signal is usually below the sensitivity level of most SDRs.</p>
 <h5 id="bladerf-micro-configuration">BladeRF Micro configuration</h5>
-<p>It appears that the BladeRF micro as it stands today cannot really receive GPS without external help: https://www.nuand.com/forums/viewtopic.php?t=4984</p>
+<p>It appears that the BladeRF micro as it stands today cannot really receive GPS without external help: https://www.nuand.com/forums/viewtopic.php?t=4984 . Don't waste your time if you have other options.</p>
 <h5 id="rtlsdr-configuration">RTLSDR configuration</h5>
 <h4 id="sending">Sending</h4>
 <p><em>Careful:</em> do not blindly broadcast your own GPS signals, this is illegal, and will lead to very serious trouble if you get caught doing this.</p>
@@ -363,5 +381,5 @@ style = native
 
 <!--
 MkDocs version : 1.0.4
-Build Date UTC : 2019-10-22 06:06:30
+Build Date UTC : 2019-10-22 16:21:36
 -->
