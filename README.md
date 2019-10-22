@@ -1,11 +1,15 @@
 # gr-experiments
 
-A set of GNURadio programs
+A set of GNURadio programs.
+
+Checkout [The longer documentation](https://elafargue.github.io/gr-experiments) for all the details.
 
 Dependencies:
 
 - gr-rds
 - gr-ncrs5
+
+The list below is not exhaustive:
 
 ## stream.sh
 
