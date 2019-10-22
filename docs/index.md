@@ -2,6 +2,8 @@
 
 ## Preamble
 
+THESE ARE MY OWN NOTES AFTER WORKING WITH GNURADIO FOR A WHILE, NO PROMISE OF ANY FITNESS FOR ANY PARTICULAR PURPOSE.
+
 GNURadio is an amazing framework for all things related radio digital signal processing, and it is as powerful as it is daunting: it is a fairly venerable project started in 2001, and has always been a real adventure to install on any computer. The main gnuradio documentation, maintained on wiki.gnuradio.org, will usually help, but it is all in all fairly sparse and often quite arcane.
 
 There is a lot of material out there about GNURadio, with varying degrees of relevance, accuracy, compatibility with the current versions of GNURadio. This guide is an attempt at covering most of the basics of building GNURadio flowgraphs to process most common radio modulations, along with examples of more advanced software, often based on GNURadio, designed to fully demodulate various categories of radio signals.
@@ -156,9 +158,11 @@ Reference links:
 
 (todo: insert flowgraph of my own SSB receiver)
 
+Flowgraph file is [here](https://github.com/elafargue/gr-experiments/blob/master/basic-ssb-receiver.grc)
+
 ## Digital operations
 
-Nowadays, radio signals are often used to transmit bits rather than analog information. This section covers the most common techniques used for doing this.
+Nowadays, radio signals are often used to transmit bits rather than analog information. This section covers some common techniques used for doing this.
 
 ### Basics of digital operations
 
@@ -168,12 +172,12 @@ Digital signals are usually modulated using a combination of the amplitude, freq
 - Some sort of header that contains the expected length of the frame
 - Error correcting codes, either throughout or at the end of the frame.
 
-The digital to analogue conversion, besides modulating a bitstream using Amplitude/Frequency/Phase or a combination of all of these, also uses a notion of "symbols": instead of doing a one-to-one conversion of a "0" or "1" into two discrete analogue signal states, a lot of modulation schemes take longer bit sequences, such as "00" "01" "10" "11" and turn them into multiple discrete analogue signal states. Those sequences are called "symbols" and allow increasing the density of information that is sent inside of each modulation state.
+Digital to analogue conversion, besides modulating a bitstream using Amplitude/Frequency/Phase or a combination of all of these, also uses a notion of "symbols": instead of doing a one-to-one conversion of a "0" or "1" into two discrete analogue signal states, a lot of modulation schemes take longer bit sequences, such as "00" "01" "10" "11" and turn them into multiple discrete analogue signal states. Those sequences are called "symbols" and allow increasing the density of information that is sent inside of each modulation state.
 
 A demodulator therefore needs to do the following on an incoming analog signal:
 
-- Demodulate the analog signal to turn it in to a "clean" analogue signal with clear discrete states for each symbol
-- Turn that demodulated analogue signal into a symbols by knowing exactly when to sample the signal state to turn it into symbols. This is called "clock recovery"
+- Demodulate the raw analogue signal to turn it in to a "clean" analogue signal with clear discrete states
+- Turn that demodulated analogue signal into a symbols by knowing exactly when to sample the signal state to map it to symbols. This is called "clock recovery"
 - Remap the symbols to bit values
 - Find start sequences in the bitstream to get in sync
 - Recover packet length
@@ -183,9 +187,7 @@ GNURadio provides a lot of blocks to do almost all of these operations, but star
 
 The next couple of sections provide more details on some of the aspects of demodulation using GNURadio.
 
-#### Recovering a bitstream
-
-As we saw just above, at a high level, the steps usually are:
+From a more tactical perspective, what you will usually find in a flowgraph is the following:
 
 1. Analogue signal reception from SDR
 2. Low Pass / frequency translate to center the signal around zero hertz
@@ -194,9 +196,7 @@ As we saw just above, at a high level, the steps usually are:
 5. Bitstream decoding (NRZ, Manchester, inversion, etc)
 6. Bitstream deframing
 
-A good example of this whole chain is the AX25 receiver that is included in this repository, that covers all these steps using standard GNURadio blocks. Note that this is a bit more complex than raw FSK signals, because AX25 is transmitted over narrow-band HAM radio, so the flowgraph first demodulates the FM signal into an audio signal, then it does the actual Audio FSK (aka AFSK) demodulation.
-
-![Basic AX25 receiver](assets/basic-ax25-receiver.png)
+The analogue part was covered to some extent in some of the basic receivers above.
 
 #### Clock recovery
 
@@ -227,7 +227,7 @@ Frequency Shift Keying, or "FSK", uses discrete frequency changes of a carrier s
 
 FSK is usually demodulated using quadrature demodulation.
 
-Note that a FSK-modulated signal can be transmitted as a carrier changing over N frequencies (usually within a couple of hundred hertz of each other), or through discrete frequency changes of a signat that is FM or AM modulated. In the latter case, we usually talk about "AFSK", or "Audio FSK".
+Note that a FSK-modulated signal can be transmitted as a carrier changing over N frequencies (usually within a couple of hundred hertz of each other), or through discrete frequency changes of a signal that is FM or AM modulated. In the latter case, we usually talk about "AFSK", or "Audio FSK".
 
 Other kinds of FSK exist that were designed to improve specific aspects of this sort of modulation, such as power efficiciency. The [wikipedia](https://en.wikipedia.org/wiki/Frequency-shift_keying) article on FSK is a nice introduction and easy to understand.
 
@@ -243,13 +243,14 @@ The easiest way to demodulate a FSK transmission is to use a Quadrature demodula
 
 Since 2-FSK uses only 2 frequencies, there is usually a direct mapping of the frequency to either a "0" or "1" value, though you have to keep in mind that the signal is often encoded for robustness and energy efficiency using differential or Manchester encoding.
 
-The sample AX25 receiver included in this repository is a great example of 2-AFSK reception. You can use this flowgraph and adapt it to other types of modulation fairly easily:
+The sample [AX25](https://en.wikipedia.org/wiki/AX.25) receiver included in this repository is a great example of 2-AFSK reception. You can use this flowgraph and adapt it to other types of modulation fairly easily:
 
 - Adjust the FSK deviation of the signal
 - Adjust the birate
 - Adjust the bitstream decoding after the binary slicer
 
-Note: as you can see on the flowgraph below, we are doing _two_ demodulations. You have to keep in mind that FM modulation of an analogue signal modulates the carrier signal by an amount that is proportional to the original analogue signal, but multiplied by a "modulation index". For this reason, it is not possible to simply convert a FM-modulated signal into a FSK bitstream, you first need to demodulate the FM signal into the deviation-correct FSK analogue modulation, then demodulate that signal into a bitstream.
+Note: as you can see on the flowgraph below, we are doing _two_ demodulations. You have to keep in mind that FM modulation of an analogue signal modulates the carrier signal by an amount that is proportional to the original analogue signal, but multiplied by a "modulation index". For this reason, it is not possible to simply convert a FM-modulated signal into a FSK bitstream, you first need to demodulate the FM signal into the deviation-correct FSK analogue modulation, then demodulate that signal into a bitstream. Another equivalent way to look at is is that AX25 is transmitted over narrow-band HAM radio, so the flowgraph first demodulates the FM signal into an audio signal, then it does the actual Audio FSK (aka AFSK) demodulation.
+
 
 [GRC Flowgraph code](https://github.com/elafargue/gr-experiments/blob/master/basic-ax25-receiver.grc)
 
@@ -279,7 +280,17 @@ A good example of a 2-FSK signal is the old school "RTTY" modulation
 
 #### Stereo with RDS
 
+[Basic receiver](https://github.com/elafargue/gr-experiments/blob/master/rds_rx_wx.grc).
+
+[Basic transmitter](https://github.com/elafargue/gr-experiments/blob/master/fm-stereo-rds-tx.grc)
+
 ### HD Radio
+
+This requires additional gnuradio modules like gr-ncrs5.
+
+[Transmitter](https://github.com/elafargue/gr-experiments/blob/master/hdradio-tx.grc)
+
+I do not have a flowgraph for a receiver.
 
 ### Narrow band FM (“Walkie Talkies”)
 
