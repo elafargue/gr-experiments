@@ -2,7 +2,7 @@
 
 A set of GNURadio programs.
 
-Checkout [The longer documentation](https://elafargue.github.io/gr-experiments) for all the details.
+Checkout [The longer documentation](https://elafargue.github.io/gr-experiments/) for all the details.
 
 Dependencies:
 
