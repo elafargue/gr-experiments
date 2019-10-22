@@ -4,6 +4,10 @@
 
 THESE ARE MY OWN NOTES AFTER WORKING WITH GNURADIO FOR A WHILE, NO PROMISE OF ANY FITNESS FOR ANY PARTICULAR PURPOSE.
 
+A lot of those flowgraphs are my own, some are adapted/copied from various sources online. If you recognize your work and think it is missing attribution, please reach out and I will add proper credit where it's due. I simply haven't tracked down all my sources as I went along...
+
+## Introduction
+
 GNURadio is an amazing framework for all things related radio digital signal processing, and it is as powerful as it is daunting: it is a fairly venerable project started in 2001, and has always been a real adventure to install on any computer. The main gnuradio documentation, maintained on wiki.gnuradio.org, will usually help, but it is all in all fairly sparse and often quite arcane.
 
 There is a lot of material out there about GNURadio, with varying degrees of relevance, accuracy, compatibility with the current versions of GNURadio. This guide is an attempt at covering most of the basics of building GNURadio flowgraphs to process most common radio modulations, along with examples of more advanced software, often based on GNURadio, designed to fully demodulate various categories of radio signals.
@@ -274,9 +278,33 @@ A good example of a 2-FSK signal is the old school "RTTY" modulation
 
 ### Broadcast FM
 
+[Broadcast FM](https://en.wikipedia.org/wiki/FM_broadcasting) is kind of a "Hello World" of radio reception on GNURadio, the below flowgraphs are a good example of making your first steps with it. The main difference between "Broadcast FM" compared to just "FM" modulation is the following:
+
+- Broadcast FM uses a standardized frequency deviation, usually with a maximum of 75kHz
+- Pre-emphasis is applied to the signal to offset the effect of band noise
+- Modern FM usually is broadcast in stereo (see below or Wikipedia for details)
+- More and more, digital information is included in the broadcast (data, audio, or both)
+
 #### Mono
 
+A Broadcast mono FM receiver is really a standard FM receiver with standard deviation and de-emphasis applied.  It is identical to the flowgraph shown above on basic FM reception:
+
+![Basic FM Receiver](assets/basic-fm-receiver.png)
+
+[Flowgraph](https://github.com/elafargue/gr-experiments/blob/master/basic-fm-receiver.grc)
+
 #### Stereo
+
+Stereo signals are transmitted at a set of two channels: the "R+L" channels at baseband audio frequency, and "R-L" centered on 38kHz higher. This makes them compatible with mono receivers that will just demodulate the R+L component.
+
+A 19kHz pilot tone is also added to help receivers detect the presence of a stereo signal, and also reconstruct the 38kHz subcarrier to demodulate the R-L signal.
+
+For this reason, a FM stereo receiver is a a bit more complex:
+
+![Stereo FM Receiver](assets/stereo-fm-receiver.png)
+
+[Flowgraph]()
+
 
 #### Stereo with RDS
 
@@ -316,7 +344,7 @@ dump1090 works great on a Raspberry Pi, and the best way to install it is to clo
 
 #### Receiving
 
-There are several packages available out there to do GNSS demodulation. The most advanced is the creatively-named 'gnss-sdr' package available at https://github.com/gnss-sdr/gnss-sdr
+There are several packages available out there to do GNSS demodulation. The most advanced is the creatively-named 'gnss-sdr' package available on  [github](https://github.com/gnss-sdr/gnss-sdr).
 
 ##### MacOS support notes for gnss-sdr
 
@@ -324,21 +352,21 @@ There are several packages available out there to do GNSS demodulation. The most
 
 Don't forget to add "cmake -DENABLE_OSMOSDR=ON .." if you want OsmoSDR support (BladeRF, RTL-SDR etc).
 
-CAREFUL: be sure you do not have a lingering version of gnss-sdr installed through a package manager when you are trying to build from source, since it will usually make compilation fail. In particular, volk will leave a "volk_gnss" include path on the package manager paths (/opt/local/include for macports) that will mess up compilation, you might have to delete by hand. Also, make sure that in case you have an old homebrew install on /usr/local, none of the libraries gnss-sdr relies on are found on that path (check out the output of the cmake step).
+CAREFUL: be sure you do not have a lingering version of gnss-sdr installed through a package manager when you are trying to build from source, since it will usually make compilation fail. In particular, volk will leave a "volk_gnss" include path on the package manager paths (`/opt/local/include` for macports) that will mess up compilation, you might have to delete by hand. Also, make sure that in case you have an old homebrew install on `/usr/local`, none of the libraries gnss-sdr relies on are found on that path (check out the output of the cmake step).
 
 ##### Testing
 
-Once everything is installed (installing from a source compilation does to /usr/local by default), you can follow the tutorial on the [gnss-sdr website](https://gnss-sdr.org/my-first-fix/) and download the test file. It should decode without issues.
+Once everything is installed (installing from a source compilation does to `/usr/local` by default), you can follow the tutorial on the [gnss-sdr website](https://gnss-sdr.org/my-first-fix/) and download the test file. It should decode without issues.
 
 ##### Frontends
 
 The [Configurations](https://gnss-sdr.org/conf/) page on the gnss-sdr website does a good job explaining how to configure a couple of frontends.
 
-As the main site mentions, be sure you use an active antenna - with a bias Tee if necessary - since the GPS signal is usually below the sensitivity level of most SDRs.
+As the main site mentions, be sure you use an active antenna - use a bias Tee if necessary - since the GPS signal is usually below the sensitivity level of most SDRs.
 
 ##### BladeRF Micro configuration
 
-It appears that the BladeRF micro as it stands today cannot really receive GPS without external help: https://www.nuand.com/forums/viewtopic.php?t=4984
+It appears that the BladeRF micro as it stands today cannot really receive GPS without external help: https://www.nuand.com/forums/viewtopic.php?t=4984 . Don't waste your time if you have other options.
 
 ##### RTLSDR configuration
 
