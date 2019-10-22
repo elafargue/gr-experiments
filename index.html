@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="None">
+        
+        
+        <link rel="shortcut icon" href="img/favicon.ico">
+        <title>GNURadio experiments</title>
+        <link href="css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="js/jquery-1.10.2.min.js" defer></script>
+        <script src="js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body class="homepage">
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <a class="navbar-brand" href=".">GNURadio experiments</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#gnuradio-yet-another-guide">Gnuradio, yet another guide</a></li>
+            <li><a href="#preamble">Preamble</a></li>
+            <li><a href="#links">Links</a></li>
+            <li><a href="#variants-of-gnuradio-mainnextetc">Variants of GNURadio - main/next/etc</a></li>
+            <li><a href="#installing-gnuradio">Installing GNURadio</a></li>
+            <li><a href="#gnuradio-companion">GNURadio companion</a></li>
+            <li><a href="#other-useful-utilities">Other useful utilities</a></li>
+            <li><a href="#sdr-setups">SDR setups</a></li>
+            <li><a href="#simple-analog-operations">Simple analog operations</a></li>
+            <li><a href="#digital-operations">Digital operations</a></li>
+            <li><a href="#real-world-examples">Real world examples</a></li>
+            <li><a href="#investigating-unknown-signals">Investigating unknown signals</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="gnuradio-yet-another-guide">Gnuradio, yet another guide</h1>
+<h2 id="preamble">Preamble</h2>
+<p>GNURadio is an amazing framework for all things related radio digital signal processing, and it is as powerful as it is daunting: it is a fairly venerable project started in 2001, and has always been a real adventure to install on any computer. The main gnuradio documentation, maintained on wiki.gnuradio.org, will usually help, but it is all in all fairly sparse and often quite arcane.</p>
+<p>There is a lot of material out there about GNURadio, with varying degrees of relevance, accuracy, compatibility with the current versions of GNURadio. This guide is an attempt at covering most of the basics of building GNURadio flowgraphs to process most common radio modulations, along with examples of more advanced software, often based on GNURadio, designed to fully demodulate various categories of radio signals.</p>
+<p>A common challenge for many newcomers is that GNURadio is before anything else a digital signal processing framework: despite the 'Lego'-like approach of building flowgraphs on GNURadio Companion, you will always be very limited in what you can achieve without proper understanding of the fundamentals of digital signal processing. There are a lot of excellent resources on the web for learning this (see the links section below), as well as many university courses, and if you are seriously planning to use GNURadio for real projects, learning - or taking a refresher on - digital signal processing is really a must.</p>
+<p>This guide is an attempt at getting you up and running on GNURadio as of early 2019, and introduce you to the basic building blocks of the framework, so that you can in turn use GNURadio for your own projects.</p>
+<p>Last, this guide is heavily biased towards MacOS, and everything in here is working with GNURadio version 3.7.14. YMMV.</p>
+<h2 id="links">Links</h2>
+<p>A lot of the material in the following links is useful for learning not only about GNURadio, but also about digital signal processing.</p>
+<ul>
+<li><a href="http://dspguru.com/files/QuadSignals.pdf">Introduction to quadrature signals by dspguru</a>. An excellent and approachable paper.</li>
+<li><a href="https://www.youtube.com/user/balint256">balint256 YouTube channel</a>. The GNURadio video tutorial there is outdated, but contains a lot of great fundamentals, definitely worth a watch.</li>
+<li>http://complextoreal.com/tutorials/</li>
+</ul>
+<h2 id="variants-of-gnuradio-mainnextetc">Variants of GNURadio - main/next/etc</h2>
+<p>GNURadio uses a concept of "gnuradio" and "gnuradio-next" for its stable and development branches. The stable branch is usually the way to go.</p>
+<h2 id="installing-gnuradio">Installing GNURadio</h2>
+<p>https://wiki.gnuradio.org/index.php/InstallingGR is the official documentation. Below are my own notes on how to actually get it to work</p>
+<h3 id="linux">Linux</h3>
+<p>Most distributions do have a gnuradio package. Be careful though, those versions are often out of date, especially the 'stable' versions.</p>
+<p>My advice is to first check out the version of GNURadio that is available on your package manager, then decide whether you want to go to the trouble of going a source code install, which is not a super trivial task. That said, GNURadio has improved that respect a lot over the years by using their own Python system they call "PyBOMBS".</p>
+<p>If you want to attempt a source install, follow the guide at: https://wiki.gnuradio.org/index.php/InstallingGRFromSource</p>
+<h4 id="running-in-a-linux-vm">Running in a Linux VM</h4>
+<p>While running GNURadio inside a Linux VM works fine, you will probably encounter performance issues when using it with physical SDR radios over USB, so a native version is usually preferable.</p>
+<h3 id="macos">MacOS</h3>
+<p>MacOS does run GNURadio quite well, and has its own install page on the GNURadio wiki: https://wiki.gnuradio.org/index.php/MacInstall</p>
+<p>As with Linux, using a package manager is a good idea if the package is not too outdated. Macports is usually considered as the most stable and maintained port for GNURadio, but Homebrew has been making great progress lately, and will get you up and running quite well.</p>
+<p>As of 2019.04, my advice is to go the Macports way to install the stable version of GNURadio, it does work well and closely follows the GNURadio project releases.</p>
+<h4 id="macos-quirks">MacOS quirks</h4>
+<p>As usual with Open Source projects, there are a bunch of weird quirks for running various parts of GNURadio, in particular when using Gnuradio Companion with Qt blocks: the symptom is the UI flickering very fast. This can be easily solved though, by configuring the global settings at <code>~/.gnuradio/config.conf</code> with:</p>
+<pre><code class="sh">[qtgui]
+style = native
+</code></pre>
+
+<p>If you installed GNURadio through MacPorts, you might have to explicitly tell cmake to point to <code>/opt/local</code> when compiling OOT ("Out of tree") modules:</p>
+<pre><code class="sh">cmake -DCMAKE_INSTALL_PREFIX=/opt/local ..
+</code></pre>
+
+<h4 id="using-pybombs">Using PyBOMBS</h4>
+<p>Apparently, some say this is possible on MacOS X... I have not attempted this.</p>
+<h3 id="optimization-tricks">Optimization tricks</h3>
+<p>ToDo: speak about hardware acceleration, expectations of performance, etc.</p>
+<h2 id="gnuradio-companion">GNURadio companion</h2>
+<p>GNURadio companion is the graphical flow graph editor of GNURadio, and a great way to do rapid prototyping on this framework. While you will probably want to work in either C++ or Python for production usage if you intend to use the GNURadio framework for your own applications, GNURadio companion is a perfect tool for doing lab work and general signal hacking.</p>
+<p>GNURadio companion uses a graphical editor to layout GNURadio blocks and connect them together.</p>
+<h3 id="gnuradio-blocks">GNURadio blocks</h3>
+<p>GNURadio uses a concept of signal processing blocks. Those blocks can be written in a variety of languages, from Python to C++, with C++ implementations being usually faster than Python. There is documentation on the GNURadio wiki about writing modules, that might or might not be matching the current version of GNURadio, but will in any case provide a bit of help.</p>
+<p>ToDo: describe the blocks, what they do, etc.</p>
+<h2 id="other-useful-utilities">Other useful utilities</h2>
+<p>Those are utilities I have found really useful in working with new signals:</p>
+<h3 id="gqrx">gqrx</h3>
+<p><a href="https://gqrx.dk">gqrx</a> is an easy(ish) to use software defined radio receiver, that is a great tool for quickly visualizing a signal.</p>
+<p>ToDo: examples of signals and how to recognize them</p>
+<h3 id="urh">URH</h3>
+<p><a href="https://github.com/jopohl/urh">Universal Radio Hacker</a> is a lower level tool that can be very powerful to understand digital modulations and quickly do demodulation work. It comes with excellent documentation for an Open Source project, which is a really refreshing change.</p>
+<p>ToDo: examples of demodulating a signal with URH</p>
+<h4 id="macos-notes">MacOS notes</h4>
+<p>Macports does not have a URH port, but you can install all of its dependencies from macports. Then you can run it, but be sure to <code>export CFLAGS="-I /opt/local/include</code> before either doing a pip install or running from the source tree.</p>
+<p>In order to compile SDR extensions on MacOS with Macports, use the fork at https://github.com/elafargue/urh which supports that distribution.</p>
+<p>ToDo: URH tutorial</p>
+<h3 id="inspectrum">Inspectrum</h3>
+<p><a href="https://github.com/miek/inspectrum/">Inspectrum</a> is similar to URH but written in C++. It is fairly simple to build and is a good addition to any signal processing toolbox.</p>
+<h2 id="sdr-setups">SDR setups</h2>
+<h3 id="rtl-sdr">rtl-sdr</h3>
+<h3 id="usrp">USRP</h3>
+<h3 id="osmocom-bladerf">osmocom / BladeRF</h3>
+<h2 id="simple-analog-operations">Simple analog operations</h2>
+<h3 id="fm-demodulation">FM Demodulation</h3>
+<p>FM demodulation is fairly simple: a FM-modulated signal is a carrier whose frequency varies proportionnal to the signal that we want to transmit. See <a href="https://en.wikipedia.org/wiki/Frequency_modulation">wikipedia</a> for the basics.</p>
+<p>From a Gnuradio companion perspective, it is very simple to represent in a flowgraph:</p>
+<p><img alt="Basic FM receiver" src="assets/basic-fm-receiver.png" /></p>
+<p>Flowgraph file is <a href="https://github.com/elafargue/gr-experiments/blob/master/basic-fm-receiver.grc">here</a>.</p>
+<p>This is a good first example, because it covers the very basics of what digital signal processing of radio signals is about. A great introduction to this, in case you do not yet understand the principle of working with in-phase and quadrature (aka IQ) signal components, is the <a href="http://dspguru.com/files/QuadSignals.pdf">introduction by dspguru</a>.</p>
+<h3 id="am-demodulation">AM Demodulation</h3>
+<p>AM demodulation is similar: an AM-modulated signal is also a carrier, but this time the amplitude of this carrier varies along with the signal we want to transmit. We can simply demodulate this signal by detecting the envelope of the received signal:</p>
+<p>The most basic GNURadio flowgraph for this would be as follows:</p>
+<p><img alt="Basic AM receiver" src="assets/basic-am-receiver.png" /></p>
+<p>Flowgraph file is <a href="https://github.com/elafargue/gr-experiments/blob/master/basic-am-receiver.grc">here</a>.</p>
+<p><em>note:</em> this refers to the example data file available at the excellent course at: http://www.csun.edu/~skatz/katzpage/sdr_project/ . You should look up this site to learn more able AM and SSB in relation to digital radio.</p>
+<h3 id="ssb-demodulation">SSB Demodulation</h3>
+<p>Single side band is an energy-efficient variant of amplitude modulation. Essentially, it is AM modulation with the carrier suppressed, and only one of the sidebands transmitted. It is not difficult to modulate, but demodulating it is slightly more complex. There are a couple of DSP algorithms out there for doing this, but Weaver is by far the most popular because it is very well suited to software defined radio.</p>
+<p>Reference links:</p>
+<ul>
+<li><a href="http://www.panoradio-sdr.de/ssb-demodulation/">Very good overview of SSB demodulation techniques</a></li>
+<li><a href="http://www.csun.edu/~skatz/katzpage/sdr_project/sdr/ssb_rcv_signals.pdf">Course on Weaver demodulation with clear explanation of the technique</a></li>
+</ul>
+<p>(todo: insert flowgraph of my own SSB receiver)</p>
+<h2 id="digital-operations">Digital operations</h2>
+<p>Nowadays, radio signals are often used to transmit bits rather than analog information. This section covers the most common techniques used for doing this.</p>
+<h3 id="basics-of-digital-operations">Basics of digital operations</h3>
+<p>Digital signals are usually modulated using a combination of the amplitude, frequency and phase of a signal. To make demodulation easier, binary data is often encapsulated into frames that usually contain:</p>
+<ul>
+<li>A start sequence, used by the demodulator to synchronise itself to the incoming bitstream</li>
+<li>Some sort of header that contains the expected length of the frame</li>
+<li>Error correcting codes, either throughout or at the end of the frame.</li>
+</ul>
+<p>The digital to analogue conversion, besides modulating a bitstream using Amplitude/Frequency/Phase or a combination of all of these, also uses a notion of "symbols": instead of doing a one-to-one conversion of a "0" or "1" into two discrete analogue signal states, a lot of modulation schemes take longer bit sequences, such as "00" "01" "10" "11" and turn them into multiple discrete analogue signal states. Those sequences are called "symbols" and allow increasing the density of information that is sent inside of each modulation state.</p>
+<p>A demodulator therefore needs to do the following on an incoming analog signal:</p>
+<ul>
+<li>Demodulate the analog signal to turn it in to a "clean" analogue signal with clear discrete states for each symbol</li>
+<li>Turn that demodulated analogue signal into a symbols by knowing exactly when to sample the signal state to turn it into symbols. This is called "clock recovery"</li>
+<li>Remap the symbols to bit values</li>
+<li>Find start sequences in the bitstream to get in sync</li>
+<li>Recover packet length</li>
+<li>"Deframe" the packet and check its CRC</li>
+</ul>
+<p>GNURadio provides a lot of blocks to do almost all of these operations, but start sequence detection and deframing is usually quite specific to each modulation type, and there is only a limited number of off the shelf blocks that can be used for this. You will often need to get into python - or C - and write your own blocks for those.</p>
+<p>The next couple of sections provide more details on some of the aspects of demodulation using GNURadio.</p>
+<h4 id="recovering-a-bitstream">Recovering a bitstream</h4>
+<p>As we saw just above, at a high level, the steps usually are:</p>
+<ol>
+<li>Analogue signal reception from SDR</li>
+<li>Low Pass / frequency translate to center the signal around zero hertz</li>
+<li>Analogue demodulate</li>
+<li>Clock Recovery</li>
+<li>Bitstream decoding (NRZ, Manchester, inversion, etc)</li>
+<li>Bitstream deframing</li>
+</ol>
+<p>A good example of this whole chain is the AX25 receiver that is included in this repository, that covers all these steps using standard GNURadio blocks. Note that this is a bit more complex than raw FSK signals, because AX25 is transmitted over narrow-band HAM radio, so the flowgraph first demodulates the FM signal into an audio signal, then it does the actual Audio FSK (aka AFSK) demodulation.</p>
+<p><img alt="Basic AX25 receiver" src="assets/basic-ax25-receiver.png" /></p>
+<h4 id="clock-recovery">Clock recovery</h4>
+<p>Clock recovery is essentially a process that decides when the analogue signal should be sampled to determine the symbol state. When it works well, clock recovery will sample exactly once per transmitted symbol.</p>
+<p>GNURadio provides several good clock recovery blocks in the "Synchronizers" category. Some of the blocks that are easier to use are:</p>
+<ul>
+<li>Clock Recovery MM</li>
+<li>Polyphase Clock Sync</li>
+</ul>
+<p>With those blocks, you will need to know the symbol rate and bitrate in advance, so that they can make the right decision for sampling the symbols. The AFSK AX25 decoder flow graph below is a good example of using the Polyphase Clock Sync or the Clock Recovery MM blocks.</p>
+<h3 id="processing-bitstreams">Processing bitstreams</h3>
+<h3 id="ook-ask">OOK / ASK</h3>
+<p>This is one of the simplest kinds of digital modulation: a carrier that is simply turned on/off to transmit information, hence the "OOK" (On-Off keying) or "ASK" (Amplitude Shift Keying) acronyms.</p>
+<h4 id="useful-demodulators">Useful demodulators</h4>
+<p><a href="https://github.com/merbanan/rtl_433">rtl_433</a> is a great general purpose demodulator and decoder for OOK signals, and is able to decode more than a hundred types of simple sensors, from wireless alarm sensors to a bunch of weather sensors.</p>
+<p><a href="https://github.com/bemasher/rtlamr">rtlamr</a> An rtl-sdr receiver for Itron ERT compatible smart meters operating in the 900MHz ISM band.</p>
+<h3 id="frequency-shift-keying">Frequency shift keying</h3>
+<p>Frequency Shift Keying, or "FSK", uses discrete frequency changes of a carrier signal for modulating a bitstream. The simplest FSk uses two frequencies, one for "0" and one for "1", but it is also possible to use a larger number of discrete frequencies to encode longer symbols - for example "00", "01", "10" and "11" can be transmitted using 4-FSK, i.e. four separate frequencies.</p>
+<p>FSK is usually demodulated using quadrature demodulation.</p>
+<p>Note that a FSK-modulated signal can be transmitted as a carrier changing over N frequencies (usually within a couple of hundred hertz of each other), or through discrete frequency changes of a signat that is FM or AM modulated. In the latter case, we usually talk about "AFSK", or "Audio FSK".</p>
+<p>Other kinds of FSK exist that were designed to improve specific aspects of this sort of modulation, such as power efficiciency. The <a href="https://en.wikipedia.org/wiki/Frequency-shift_keying">wikipedia</a> article on FSK is a nice introduction and easy to understand.</p>
+<h4 id="links_1">Links</h4>
+<ul>
+<li>https://github.com/handiko/gr-APRS</li>
+<li>A great tutorial: http://aaronscher.com/GNU_Radio_Companion_Collection/Audio_Modem_loop_back_test_FSK.html</li>
+<li>Another one: https://nccgroup.github.io/RFTM/fsk_receiver.html</li>
+</ul>
+<h4 id="2-afsk">2-AFSK</h4>
+<p>The easiest way to demodulate a FSK transmission is to use a Quadrature demodulation block: the output of quadrature demodulation varies with the phase change that occurs at frequency transition between the FSK frequencies, so this is a good way to turn the signal into symbol states.</p>
+<p>Since 2-FSK uses only 2 frequencies, there is usually a direct mapping of the frequency to either a "0" or "1" value, though you have to keep in mind that the signal is often encoded for robustness and energy efficiency using differential or Manchester encoding.</p>
+<p>The sample AX25 receiver included in this repository is a great example of 2-AFSK reception. You can use this flowgraph and adapt it to other types of modulation fairly easily:</p>
+<ul>
+<li>Adjust the FSK deviation of the signal</li>
+<li>Adjust the birate</li>
+<li>Adjust the bitstream decoding after the binary slicer</li>
+</ul>
+<p>Note: as you can see on the flowgraph below, we are doing <em>two</em> demodulations. You have to keep in mind that FM modulation of an analogue signal modulates the carrier signal by an amount that is proportional to the original analogue signal, but multiplied by a "modulation index". For this reason, it is not possible to simply convert a FM-modulated signal into a FSK bitstream, you first need to demodulate the FM signal into the deviation-correct FSK analogue modulation, then demodulate that signal into a bitstream.</p>
+<p><a href="https://github.com/elafargue/gr-experiments/blob/master/basic-ax25-receiver.grc">GRC Flowgraph code</a></p>
+<p><img alt="Basic AX25 receiver" src="assets/basic-ax25-receiver.png" /></p>
+<h4 id="2-fsk">2-FSK</h4>
+<p>A good example of a 2-FSK signal is the old school "RTTY" modulation</p>
+<h3 id="n-fsk">N-FSK</h3>
+<h4 id="links_2">Links</h4>
+<ul>
+<li>http://qradiolink.org/4fsk-viterbi-soft-symbol-decoding.html</li>
+</ul>
+<h3 id="phase-shift-keying">Phase shift keying</h3>
+<h3 id="ofdm">OFDM</h3>
+<h2 id="real-world-examples">Real world examples</h2>
+<h3 id="broadcast-fm">Broadcast FM</h3>
+<h4 id="mono">Mono</h4>
+<h4 id="stereo">Stereo</h4>
+<h4 id="stereo-with-rds">Stereo with RDS</h4>
+<h3 id="hd-radio">HD Radio</h3>
+<h3 id="narrow-band-fm-walkie-talkies">Narrow band FM (“Walkie Talkies”)</h3>
+<h4 id="frs-transceiver">FRS transceiver</h4>
+<h3 id="texas-instruments-c1111">Texas Instruments C1111</h3>
+<p>https://github.com/funoverip/gr-cc1111</p>
+<h3 id="adsb-reception">ADSB reception</h3>
+<p>ToDo: explain ADSB demodulation on both gnuradio (if that exists at all), and on native utilities</p>
+<h4 id="dump1090">dump1090</h4>
+<p>The dump1090 is the best known utility to receive ADS-B frames from planes and helicopters. It was originally created as a quick hack and abandonned by its creator, then taken over by a couple of other people, before finding a home with Flight Aware who are maintaining the <a href="https://github.com/flightaware/dump1090">most up to date version</a> these days (2019.04).</p>
+<p>dump1090 works great on a Raspberry Pi, and the best way to install it is to clone the github repository, and build the debian package from there.</p>
+<p><em>BladeRF Micro support:</em> I have opened a <a href="https://github.com/flightaware/dump1090/pull/37">pull request</a> to add support for the BladeRF micro. Note that the BladeRF micro does not seem to work nearly as well as the bespoke rtl-sdr based orange dongle of Flight Aware, I might need to spend more time working at the gain settings for that device. In theory it should be able to work as well as RTL-SDR dongles, especially if used with a LNA.</p>
+<h3 id="gpsgnss">GPS/GNSS</h3>
+<h4 id="receiving">Receiving</h4>
+<p>There are several packages available out there to do GNSS demodulation. The most advanced is the creatively-named 'gnss-sdr' package available at https://github.com/gnss-sdr/gnss-sdr</p>
+<h5 id="macos-support-notes-for-gnss-sdr">MacOS support notes for gnss-sdr</h5>
+<p>2019.04: gnss-sdr is avaible on MacPort but on an outdated version that basically crashes with any current SDR (rtlsdr/osmocom). it is possible to build on MacOS though, using the current version of GNURadio installed through Macports. There are good build instructions available on the main github README.md page for gnss-sdr which you should follow.</p>
+<p>Don't forget to add "cmake -DENABLE_OSMOSDR=ON .." if you want OsmoSDR support (BladeRF, RTL-SDR etc).</p>
+<p>CAREFUL: be sure you do not have a lingering version of gnss-sdr installed through a package manager when you are trying to build from source, since it will usually make compilation fail. In particular, volk will leave a "volk_gnss" include path on the package manager paths (/opt/local/include for macports) that will mess up compilation, you might have to delete by hand. Also, make sure that in case you have an old homebrew install on /usr/local, none of the libraries gnss-sdr relies on are found on that path (check out the output of the cmake step).</p>
+<h5 id="testing">Testing</h5>
+<p>Once everything is installed (installing from a source compilation does to /usr/local by default), you can follow the tutorial on the <a href="https://gnss-sdr.org/my-first-fix/">gnss-sdr website</a> and download the test file. It should decode without issues.</p>
+<h5 id="frontends">Frontends</h5>
+<p>The <a href="https://gnss-sdr.org/conf/">Configurations</a> page on the gnss-sdr website does a good job explaining how to configure a couple of frontends.</p>
+<p>As the main site mentions, be sure you use an active antenna - with a bias Tee if necessary - since the GPS signal is usually below the sensitivity level of most SDRs.</p>
+<h5 id="bladerf-micro-configuration">BladeRF Micro configuration</h5>
+<p>It appears that the BladeRF micro as it stands today cannot really receive GPS without external help: https://www.nuand.com/forums/viewtopic.php?t=4984</p>
+<h5 id="rtlsdr-configuration">RTLSDR configuration</h5>
+<h4 id="sending">Sending</h4>
+<p><em>Careful:</em> do not blindly broadcast your own GPS signals, this is illegal, and will lead to very serious trouble if you get caught doing this.</p>
+<h5 id="gps-sdr-sim">gps-sdr-sim</h5>
+<p>Available on <a href="https://github.com/osqzss/gps-sdr-sim">github</a>, it seems to be the reference. The current version as of 2019 works very well, and will accept 10Hz NMEA input as well as a couple or other formats, and is easy to extend.</p>
+<p>It is also compatible with multiple frontends and I have tested it with success on URSP SDRs.</p>
+<p>A great way to test this is to feed the generated ".bin" file to gnss-sdr.</p>
+<h3 id="bluetooth">Bluetooth</h3>
+<h3 id="wifi">WiFi</h3>
+<h2 id="investigating-unknown-signals">Investigating unknown signals</h2>
+<h3 id="using-urh">Using URH</h3>
+<h3 id="writing-a-bitstream-processor">Writing a bitstream processor</h3></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = ".",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="js/base.js" defer></script>
+        <script src="search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
+
+<!--
+MkDocs version : 1.0.4
+Build Date UTC : 2019-10-22 05:22:30
+-->
