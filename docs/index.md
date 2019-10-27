@@ -141,6 +141,37 @@ Single side band is an energy-efficient variant of amplitude modulation. Essenti
 
 ### Other modulations
 
+#### Analog and digital video
+
+Quick side note on video: there is a great utility that works with "Tempest" radiated transmission on video signals (TODO: more background on Tempest): TempestSDR, which works great with the USRP.
+
+[TempestSDR](https://github.com/martinmarinov/TempestSDR). Works great on the Mac. You will need to patch a couple of things to make it run, but nothing bad:
+
+```
+--- a/TSDRPlugin_UHD/src/TSDRPlugin_UHD.cpp
++++ b/TSDRPlugin_UHD/src/TSDRPlugin_UHD.cpp
+@@ -14,7 +14,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ 
+-#include <uhd/utils/thread_priority.hpp>
++#include <uhd/utils/thread.hpp>
+ #include <uhd/utils/safe_main.hpp>
+ #include <uhd/usrp/multi_usrp.hpp>
+ #include <uhd/transport/udp_simple.hpp>
+@@ -332,7 +332,7 @@ EXTERNC TSDRPLUGIN_API int __stdcall tsdrplugin_readasync(tsdrplugin_readasync_f
+ 		// flush usrpbuffer
+ 	    while(rx_stream->recv(
+ 	        buff, samples_per_api_read, md,
+-	        uhd::device::RECV_MODE_ONE_PACKET
++	        true
+ 	    )){
+ 	        /* NOP */
+ 	    };
+```
+
+
+
 ## Digital operations
 
 Nowadays, radio signals are often used to transmit bits rather than analog information. This section covers the most common techniques used for doing this.
