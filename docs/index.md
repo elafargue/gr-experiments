@@ -34,6 +34,8 @@ GNURadio uses a concept of "gnuradio" and "gnuradio-next" for its stable and dev
 
 https://wiki.gnuradio.org/index.php/InstallingGR is the official documentation. Below are my own notes on how to actually get it to work
 
+As of early 2020, the only version of GNURadio that is "easy" to install and compatible with most 3rd party modules is 3.7, despite the fact that 3.8 was released mid-2019. This is changing relatively rapidly though, so double-check.
+
 ### Linux
 
 Most distributions do have a gnuradio package. Be careful though, those versions are often out of date, especially the 'stable' versions.
@@ -121,7 +123,11 @@ ToDo: URH tutorial
 
 ### rtl-sdr
 
+Support for the RTL-SDR family on GNURadio is done through the `gr-osmosdr` module.
+
 ### USRP
+
+USRP is extremely well supported by GNURadio, of course. the `uhd` Macports module implements this.
 
 ### osmocom / BladeRF
 
@@ -170,7 +176,7 @@ Quick side note on video: there is a great utility that works with "Tempest" rad
 
 [TempestSDR](https://github.com/martinmarinov/TempestSDR). Works great on the Mac. You will need to patch a couple of things to make it run, but nothing bad:
 
-```
+```patch
 --- a/TSDRPlugin_UHD/src/TSDRPlugin_UHD.cpp
 +++ b/TSDRPlugin_UHD/src/TSDRPlugin_UHD.cpp
 @@ -14,7 +14,7 @@
@@ -192,8 +198,6 @@ Quick side note on video: there is a great utility that works with "Tempest" rad
  	        /* NOP */
  	    };
 ```
-
-
 
 ## Digital operations
 
@@ -343,13 +347,19 @@ For this reason, a FM stereo receiver is a a bit more complex:
 
 [Basic transmitter](https://github.com/elafargue/gr-experiments/blob/master/fm-stereo-rds-tx.grc)
 
+The transmitter in the flowgraph above expects audio to be coming in through a fifo, and listens for RDS information on TCP port 52001.
+
 ### HD Radio
 
-This requires additional gnuradio modules like gr-ncrs5.
+This requires additional gnuradio modules like `gr-ncrs5`.
 
 [Transmitter](https://github.com/elafargue/gr-experiments/blob/master/hdradio-tx.grc)
 
 I do not have a flowgraph for a receiver.
+
+### Iridium
+
+The Iridium constellation (old version, no the 'Iridium Next' generation that was launched in 2018/2019) can be received using the `gr-iridium` modules.
 
 ### Narrow band FM (“Walkie Talkies”)
 
@@ -422,4 +432,3 @@ A great way to test this is to feed the generated ".bin" file to gnss-sdr.
 ### Using URH
 
 ### Writing a bitstream processor
-

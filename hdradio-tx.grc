@@ -1140,7 +1140,7 @@
     </param>
     <param>
       <key>file</key>
-      <value>sample.wav</value>
+      <value>/Users/elafargue/Documents/Prodsec/Radio/gr-nrsc5/sample.wav</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -1313,7 +1313,7 @@
     </param>
     <param>
       <key>_enabled</key>
-      <value>1</value>
+      <value>0</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -2695,7 +2695,7 @@
     </param>
     <param>
       <key>dev_args</key>
-      <value>"send_frame_size=65536,num_send_frames=128"</value>
+      <value></value>
     </param>
     <param>
       <key>_enabled</key>

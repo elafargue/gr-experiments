@@ -167,7 +167,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>89.5e6</value>
+      <value>87.9e6</value>
     </param>
   </block>
   <block>
@@ -221,7 +221,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>10</value>
+      <value>128</value>
     </param>
   </block>
   <block>
@@ -303,7 +303,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(592, 28)</value>
+      <value>(584, 24)</value>
     </param>
     <param>
       <key>gui_hint</key>
@@ -334,7 +334,7 @@
     </param>
     <param>
       <key>value</key>
-      <value>"Radiotext"</value>
+      <value>"😁"</value>
     </param>
     <param>
       <key>_enabled</key>
@@ -569,7 +569,7 @@
     </param>
     <param>
       <key>file</key>
-      <value>stream.fifo</value>
+      <value>/tmp/stream_32k.fifo</value>
     </param>
     <param>
       <key>_coordinate</key>
@@ -730,7 +730,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(544, 300)</value>
+      <value>(536, 300)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -781,7 +781,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(536, 396)</value>
+      <value>(536, 436)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -973,7 +973,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(944, 184)</value>
+      <value>(944, 148)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -989,7 +989,7 @@
     </param>
     <param>
       <key>mtu</key>
-      <value>10000</value>
+      <value>1024</value>
     </param>
     <param>
       <key>maxoutbuf</key>
@@ -1005,7 +1005,7 @@
     </param>
     <param>
       <key>tcp_no_delay</key>
-      <value>False</value>
+      <value>True</value>
     </param>
     <param>
       <key>type</key>
@@ -1613,7 +1613,7 @@
     </param>
     <param>
       <key>radiotext</key>
-      <value>"'&gt;%0&lt;font color="red"&gt;Yo&lt;/font&gt;</value>
+      <value> 😁</value>
     </param>
     <param>
       <key>ta</key>
@@ -1833,7 +1833,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(408, 384)</value>
+      <value>(408, 424)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -2568,6 +2568,38 @@
     <param>
       <key>note</key>
       <value>Value for 1187.5 bps</value>
+    </param>
+  </block>
+  <block>
+    <key>note</key>
+    <param>
+      <key>alias</key>
+      <value></value>
+    </param>
+    <param>
+      <key>comment</key>
+      <value>mkfifo stream_32k.fifo
+while true; do mpg123 -r44100 -b 10  -s  http://maxxima.mine.nu:8000 &gt;stream_32k.fifo; done</value>
+    </param>
+    <param>
+      <key>_enabled</key>
+      <value>True</value>
+    </param>
+    <param>
+      <key>_coordinate</key>
+      <value>(160, 692)</value>
+    </param>
+    <param>
+      <key>_rotation</key>
+      <value>0</value>
+    </param>
+    <param>
+      <key>id</key>
+      <value>note_7</value>
+    </param>
+    <param>
+      <key>note</key>
+      <value>How to stream music:</value>
     </param>
   </block>
   <block>
@@ -4194,7 +4226,7 @@
     </param>
     <param>
       <key>_coordinate</key>
-      <value>(192, 440)</value>
+      <value>(184, 432)</value>
     </param>
     <param>
       <key>_rotation</key>
@@ -4308,7 +4340,7 @@
     </param>
     <param>
       <key>gain0</key>
-      <value>3</value>
+      <value>30</value>
     </param>
     <param>
       <key>ant10</key>
@@ -5088,7 +5120,7 @@
     </param>
     <param>
       <key>stream_args</key>
-      <value></value>
+      <value>send_frame_size=1024</value>
     </param>
     <param>
       <key>stream_chans</key>
@@ -5096,7 +5128,7 @@
     </param>
     <param>
       <key>sync</key>
-      <value></value>
+      <value>pc_clock</value>
     </param>
     <param>
       <key>len_tag_name</key>
@@ -5104,7 +5136,7 @@
     </param>
     <param>
       <key>otw</key>
-      <value></value>
+      <value>sc8</value>
     </param>
   </block>
   <connection>
