@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Unknown FSK signal - Experiments in software radio</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Experiments in software radio</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href="../.." class="nav-link">Experiments in software radio</a>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Examples <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="./" class="dropdown-item active">Unknown FSK signal</a>
+</li>
+                                    
+<li>
+    <a href="../ook/" class="dropdown-item">Unknown OOK signal</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../.." class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" href="../ook/" class="nav-link">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#unknown-fsk-signal" class="nav-link">Unknown FSK signal</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#example-1-2-fsk-restaurant-pager" class="nav-link">Example 1 - 2-FSK Restaurant pager</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="unknown-fsk-signal">Unknown FSK signal</h1>
+<h2 id="example-1-2-fsk-restaurant-pager">Example 1 - 2-FSK Restaurant pager</h2>
+<p>You can open this file in URH, and use the (i) dialog to set the sample rate (good practice so that the timings are displayed accurately).</p>
+<p>Zooming in on the signal shows that we are dealing with multiple frequencies, which is a hint of a couple of things:</p>
+<ul>
+<li>It might be FSK</li>
+<li>The recording might contain both a signal and harmonics - possibly caused by a SDR frontend overload</li>
+</ul>
+<p><img alt="URH View 1" src="../fsk-URH-1.png" /></p>
+<p>We can qualify this by picking the spectrogram view and zoom in:</p>
+<p><img alt="URH View 2" src="../fsk-URH-2.png" /></p>
+<p>Zooming in further, it's clear that the horizontal lines are just the same signal appearing multiple times (and mirrored), which is typical of the SDR receiver being overloaded, so let's just select the strongest signal and isolate it:</p>
+<p><img alt="URH View 3" src="../fsk-URH-3.png" /></p>
+<p>The spectrogram view also shows clearly the presence of two different frequencies in the signal, so we're looking at a 2-tone FSK.</p>
+<p>Once the signal is isolated, we can try to do an autodetect in FSK mode - since the signal is now filtered and its sampling rate is high, autodetect works well this time around:</p>
+<p><img alt="URH View 4" src="../fsk-URH-4.png" /></p>
+<p>Like with other sampled signals, it's obvious we have a long preamble to help the receiver synchronize, then a series of 0's and 1's. The demodulated view is fairly clean and by now it's clear we have a typical FSK signal with two tones. We can also look at the average length of a bit, and we find something around 800µs to 900µs, which would be consistent with a 1200bps rate which is classic.</p>
+<p>In order to recover the value of the message, we need to zoom in on the end of the preample and determine the first bit of the payload. For this particular protocol, there is no pause between the end of the preamble and the bitstream, so the message most probably starts at the first bit that breaks the <code>01010101</code> sequence:</p>
+<p><img alt="URH View 5" src="../fsk-URH-5.png" /></p>
+<p>Moving to the "Analysis" screen, we can align the decoder by selecting the first 8 bits after the preamble and labeling those. This will force URH to align its decoding when translating to hexadecimal:</p>
+<p><img alt="URH View 6" src="../fsk-URH-6.png" /></p>
+<p>Switching back to hex format, we can see that the first byte is <code>0x83</code> - and that the sequence of <code>0xaa</code> was not perfectly aligned on multiples of 8 bits, so it was useful to create this label. If we switch back to the "Interpretation" screen <em>and</em> click on the demodulated graph again, this will trigger a re-demodulation of the bitstream and the correct bitstream value will be updated in the hex dump:</p>
+<p><img alt="URH View 7" src="../fsk-URH-7.png" /></p>
+<p>The message seems to be this:</p>
+<pre><code>832dea27
+c9a4abfa
+85763e68
+85763e68
+85763e68
+85763e68
+</code></pre>
+<p>Now, we need to make sense of it. In wireless protocols, besides preambles that are used to wake up receivers and help them sync their clocks, another pattern is often used to synchronize receivers: sync words/patterns. This is a special pattern that normally doesn't happen in the payload of wireless messages, and that receivers detect in order to align the decoding of the bitstream. Since the message contains a multiple of 4-byte sequences, there is a good chance the sync pattern is 0x832dea27.</p>
+<p>At this point, unless you already have your own database of known sync words, a duckduckgo search is a good way to make progresss. <code>0x832dea27 sync pattern</code> is a good search, but... it does not return anything.</p>
+<p>Going back to the "Analysis" screen, we can try to change the "Decoding" dropdown to <code>NRZ + Invert</code>. After all, there's no strict convention on what frequency should be a "1" and which should be a "0", so we invert the convention and see if that leads us somewhere. The - presumed - sync pattern is now demodulated as <code>0x7cd215d8</code>. And a <code>0x7cd215d8 sync pattern</code> immediately tells us that this is the pattern for... the <a href="https://en.wikipedia.org/wiki/Radio-paging_code_No._1">POCSAG</a> pager protocol! This makes complete sense since this capture was from a restaurant pager.</p>
+<p>We can therefore update the decoded stream with the inverted values (this time we must copy from the "Analysis" screen, since the "Interpretation" screen does not reflect decoding options and defaults to NRZ only). And we can actually decode the meaning using details on the protocol</p>
+<pre><code>7cd215d8  - Sync word
+365b5405  - Message
+7a89c197  - Idle frame
+7a89c197  - Idle frame
+7a89c197  - Idle frame
+7a89c197  - Idle frame
+</code></pre>
+<p>Decoding POCSAG is a job of its own, but fortunately, tools like <code>multimod-ng</code> can do this very well: you now have all you need to transform the raw IQ file into a WAV file demodulated into narrow FM mode which will give you an audio FSK file with the two tones, you use gqrx to do this. Then play the resulting wav file into multimon-ng:</p>
+<pre><code> ./multimon-ng -t wav -a POCSAG1200 ../../gqrx_20220821_193850_315598200.wav
+multimon-ng 1.2.0
+  (C) 1996/1997 by Tom Sailer HB9JNX/AE4WA
+  (C) 2012-2022 by Elias Oenal
+Available demodulators: POCSAG512 POCSAG1200 POCSAG2400 FLEX FLEX_NEXT EAS UFSK1200 CLIPFSK FMSFSK AFSK1200 AFSK2400 AFSK2400_2 AFSK2400_3 HAPN4800 FSK9600 DTMF ZVEI1 ZVEI2 ZVEI3 DZVEI PZVEI EEA EIA CCIR MORSE_CW DUMPCSV X10 SCOPE
+Enabled demodulators: POCSAG1200
+POCSAG1200: Address:  890576  Function: 2
+POCSAG1200: Address:  890576  Function: 2
+POCSAG1200: Address:  890576  Function: 2
+POCSAG1200: Address:  890576  Function: 2
+POCSAG1200: Address:  890576  Function: 2
+POCSAG1200: Address:  890576  Function: 2
+POCSAG1200: Address:  890576  Function: 2
+POCSAG1200: Address:  899706  Function: 2
+POCSAG1200: Address:  890576  Function: 2
+POCSAG1200: Address:  890576  Function: 2
+POCSAG1200: Address:  890576  Function: 2
+POCSAG1200: Address:  890576  Function: 2
+POCSAG1200: Address:  890576  Function: 2
+POCSAG1200: Address:  890576  Function: 2
+POCSAG1200: Address:  890576  Function: 2
+POCSAG1200: Address:  890576  Function: 2
+POCSAG1200: Address:  890576  Function: 2
+POCSAG1200: Address:  890576  Function: 2
+POCSAG1200: Address:  890576  Function: 2
+sox WARN rate: rate clipped 5815 samples; decrease volume?
+sox WARN dither: dither clipped 5090 samples; decrease volume?
+POCSAG1200: Address:  890576  Function: 2
+POCSAG1200: Address:  890576  Function: 2
+POCSAG1200: Address: 1618195  Function: 2
+POCSAG1200: Address:  890576  Function: 2
+</code></pre></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        
+        
+        
+        <link rel="shortcut icon" href="../../img/favicon.ico">
+        <title>Unknown OOK signal - Experiments in software radio</title>
+        <link href="../../css/bootstrap.min.css" rel="stylesheet">
+        <link href="../../css/font-awesome.min.css" rel="stylesheet">
+        <link href="../../css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/styles/github.min.css">
+
+        <script src="../../js/jquery-1.10.2.min.js" defer></script>
+        <script src="../../js/bootstrap.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.5.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body>
+        <div class="navbar fixed-top navbar-expand-lg navbar-dark bg-primary">
+            <div class="container">
+                <a class="navbar-brand" href="../..">Experiments in software radio</a>
+                <!-- Expander button -->
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbar-collapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Expanded navigation -->
+                <div id="navbar-collapse" class="navbar-collapse collapse">
+                        <!-- Main navigation -->
+                        <ul class="nav navbar-nav">
+                            <li class="navitem">
+                                <a href="../.." class="nav-link">Experiments in software radio</a>
+                            </li>
+                            <li class="dropdown active">
+                                <a href="#" class="nav-link dropdown-toggle" data-toggle="dropdown">Examples <b class="caret"></b></a>
+                                <ul class="dropdown-menu">
+                                    
+<li>
+    <a href="../fsk/" class="dropdown-item">Unknown FSK signal</a>
+</li>
+                                    
+<li>
+    <a href="./" class="dropdown-item active">Unknown OOK signal</a>
+</li>
+                                </ul>
+                            </li>
+                        </ul>
+
+                    <ul class="nav navbar-nav ml-auto">
+                        <li class="nav-item">
+                            <a href="#" class="nav-link" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                            <li class="nav-item">
+                                <a rel="prev" href="../fsk/" class="nav-link">
+                                    <i class="fa fa-arrow-left"></i> Previous
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a rel="next" class="nav-link disabled">
+                                    Next <i class="fa fa-arrow-right"></i>
+                                </a>
+                            </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <div class="row">
+                    <div class="col-md-3"><div class="navbar-light navbar-expand-md bs-sidebar hidden-print affix" role="complementary">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggler collapsed" data-toggle="collapse" data-target="#toc-collapse" title="Table of Contents">
+            <span class="fa fa-angle-down"></span>
+        </button>
+    </div>
+
+    
+    <div id="toc-collapse" class="navbar-collapse collapse card bg-secondary">
+        <ul class="nav flex-column">
+            
+            <li class="nav-item" data-level="1"><a href="#unknown-ook-signal" class="nav-link">Unknown OOK signal</a>
+              <ul class="nav flex-column">
+            <li class="nav-item" data-level="2"><a href="#example-1" class="nav-link">Example 1</a>
+              <ul class="nav flex-column">
+              </ul>
+            </li>
+              </ul>
+            </li>
+        </ul>
+    </div>
+</div></div>
+                    <div class="col-md-9" role="main">
+
+<h1 id="unknown-ook-signal">Unknown OOK signal</h1>
+<h2 id="example-1">Example 1</h2>
+<p>The <code>samples/</code> directory contains an IQ file called <code>OOK-gqrx_20220820_231011_314999950_1000000_fc.raw</code> that was captured with GQRX using a RTL-SDR generic dongle. It is a bit noisy but representative of a real world capture.</p>
+<p>GQRX names the files with the frequency of the receiver and the sample rate:</p>
+<ul>
+<li>314999950 Hz: ~315 MHz</li>
+<li>1000000 bps : 1Mbit/s sampling</li>
+</ul>
+<h3 id="using-urh">Using URH</h3>
+<p>You can open the larger file with URH and it will show you the waveform:</p>
+<p><img alt="URH View 1" src="../ook-URH-1.png" /></p>
+<p>This is typical of a basic capture where the RTL-SDR dongle gain control will overcorrect the signal which creates the irregularities. It is clear that we have three separate frames, so let's focus on the first one: select the first frame and right-click to crop the signal:</p>
+<p><img alt="URH View 2" src="../ook-URH-2.png" /></p>
+<p>Now, zooming in on the signal, you can clearly see an alternance of short bursts of varying length. This is typical of "OOK", or "On-Off Keying", where a transmitter sends a bitstream by either sending or not sending a signal at a specific frequency. "OOK" is also considered as the most simple type of "ASK" as "Amplitude Shift Keying", where a bitstreams 0's and 1's are either 0% signal or 100% signal.</p>
+<p><img alt="URH View 3" src="../ook-URH-3.png" /></p>
+<p>This example is intentionally very simple: there are only 2 lenghts of short and long modulations or spaces, with the long one being double of the short one. This is a very simple modulation, where a "symbol" will be one bit, and the symbol length is the "short" length. We can just select it to find out.</p>
+<p><strong>Hint: press the (i) in the left space where you adjust the variables, and set the sampling rate to "1M" to reflect the correct timing if you want to work out the bitrate of your signal</strong></p>
+<p>You can now make progress on the demodulation and set sensible parameters in the toolbar on the left based on what you have learned so far:</p>
+<ul>
+<li>Adjust the value of "noise" to have the noise on the signal be just covered by the red area</li>
+<li>Adjust the "samples per symbol" to 400 since this is the length of the short interval we just worked out</li>
+<li>Set error tolerance to 5% - 20 samples. No need to be too strict on short timing errors, a lot of low cost transmitters are not super accurate anyway</li>
+<li>Set modulation to ASK</li>
+</ul>
+<p><img alt="URH View 4" src="../ook-URH-4.png" /></p>
+<p>We will now focus on the lower half of the screen.</p>
+<p>If demodulation worked ou as we expected, then if we select the "Signal View" dropdown to "demodulated", then it will be clear that we now have a stream of "0" and "1". We can also change the display of the bitstream to "hex", and as you can see on the screenshot, we can see repeating patterns which is always an encouraging sign:</p>
+<p><img alt="URH View 5" src="../ook-URH-5.png" /></p>
+<p>Now, the question is whether we have actually properly decoded the message: while we clearly have a bitstream - 99.9% of the time aligned on bytes, i.e. 8 bits - , how do we know we have started the decoding of the bitstream at the first bit of the first byte&gt;</p>
+<p>The answer to this, in the vast majority of the cases, lies in the very start of the message: radio receivers also need to know the alignement, and most radio protocols include a 'preamble' to that effect. A classic preamble can be a series of 0's and 1's. Let's zoom in on the signal:</p>
+<p><img alt="URH View 6" src="../ook-URH-6.png" /></p>
+<p>The preamble is clearly visible here, and you can also notice that the space between the end of the preamble and the start of the message is 1200µs - 400µs * 3. This is also a classic pattern on radio protocols to help the receiver not only detect the start of the message, but also calibrate the bitrate on the series of 0's and 1's. This allows the use of cheap transmitters and receivers with imprecise clocks with high tolerance, where they use the preamble to align their clock rates to each other - and is also why we set the tolerance to 5% above, to account for this.</p>
+<p>The 0b10101010 pattern translates to 0xaa in hexadecimal, which is what we see in the hex dump in the URH window as well (see screenshot above). But the hex dump starts with "2", which is a glitch caused by the initial spike. We can therefore delete the unwanted glitch in the signal to start the decoding at the beginning of the preamble - or at the first bit after the preamble:</p>
+<p><img alt="URH View 7" src="../ook-URH-7.png" /></p>
+<p>And here we have it: the decoded bitstream now starts with 0xaa and we can see the repeated patterns:</p>
+<pre><code>aaaaaa8acb32cccccb4d2d4ad34cab4b1596659999969a5a95a69956962b2ccb33332d34b52b4d32ad28
+aaaaaa8acb32cccccb4d2d4ad34cab4b1596659999969a5a95a69956962b2ccb33332d34b52b4d32ad28
+aaaaaa8acb32cccccb4d2d4ad34cab4b1596659999969a5a95a69956962b2ccb33332d34b52b4d32ad28
+aaaaaa8acb32cccccb4d2d4ad34cab4b1596659999969a5a95a69956962b2ccb33332d34b52b4d32ad28
+aaaaaa8acb32cccccb4d2d4ad34cab4b1596659999969a5a95a69956962b2ccb33332d34b52b4d32ad28
+aaaaaa8acb32cccccb4d2d4ad34cab4b1596659999969a5a95a69956962b2ccb33332d34b52b4d32ad28
+aaaaaa8acb32cccccb4d2d4ad34cab4b1596659999969a5a95a69956962b2ccb33332d34b52b4d32ad28
+aaaaaa8acb32cccccb4d2d4ad34cab4b1596659999969a5a95a69956962b2ccb33332d34b52b4d32ad28
+aaaaaa8acb32cccccb4d2d4ad34cab4b1596659999969a5a95a69956962b2ccb33332d34b52b4d32ad28
+aaaaaa8acb32cccccb4d2d4ad34cab4b1596659999969a5a95a69956962b2ccb33332d34b52b4d32ad28
+ [Pause: 84909 samples]
+</code></pre>
+<p>I will leave that this means as an exercise to the reader - don't waste too much time on it though, this is just a basic remote control message with a long bit pattern that has no special meaning besides "open".</p></div>
+            </div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = "../..",
+                shortcuts = {"help": 191, "next": 78, "previous": 80, "search": 83};
+        </script>
+        <script src="../../js/base.js" defer></script>
+        <script src="../../search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="searchModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="searchModalLabel">Search</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+                <p>From here you can search these documents. Enter your search terms below.</p>
+                <form>
+                    <div class="form-group">
+                        <input type="search" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results" data-no-results-text="No results found"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="keyboardModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="keyboardModalLabel">Keyboard Shortcuts</h4>
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
